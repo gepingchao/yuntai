@@ -28,7 +28,7 @@ typedef enum
 	db_type_user_define_1,//成员名字可以根据实际更改
 	db_type_user_define_2,
 	db_type_user_define_3,
-	db_type_user_define_posiation,
+	db_type_posiation,
 	db_type_user_define_5,
 	db_type_user_define_6,
 }E_Save_Data_Type;//需要保存的结构体需要增加这个成员
@@ -204,6 +204,8 @@ extern S_Ram_Page ram_page;
 /********************************************
 函数
 ********************************************/
+
+void set_mem(unsigned char* data,unsigned char value,unsigned short length);
 void updata_data_map(void);
 
 unsigned char set_cell_size(unsigned char page,unsigned short cell_size,unsigned char force);

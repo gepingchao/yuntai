@@ -513,7 +513,7 @@ unsigned char start_tcp_client(p_S_Client_Info client)
 						Socket_Server.socket_recv_num[num] = recv(num,G_socket_buf[num],SOCKET_BUFF_SIZE) ;
 						if(Socket_Server.socket_recv_num[num] > 0)
 							{
-								send(num,G_socket_buf[num],Socket_Server.socket_recv_num[num]) ;//收到数据
+								//send(num,G_socket_buf[num],Socket_Server.socket_recv_num[num]) ;//收到数据
 								deal_all_socket_client();
 								deal_each_socket_client(num);
 								Socket_Server.socket_recv_num[num] = 0;

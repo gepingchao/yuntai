@@ -14,12 +14,21 @@ typedef struct
 ////////////////////////////////以上成员是必须存在的
 
 	unsigned char direction;
-	unsigned int x_posiation;
-	unsigned int y_posiation;
+	unsigned int h_posiation;
+	unsigned int v_posiation;
 	unsigned int speed;
 	unsigned int time;
 }S_DB_Posiation,*P_S_DB_Posiation;
 
+void reinit_db(void);
+void init_db(void);
+unsigned char save_posiation_data(P_S_Seek_Result res,P_S_DB_Posiation data);
+unsigned char seek_posiation_data(P_S_Seek_Result res,unsigned short poiation_number );
+unsigned char delete_posiation_data(P_S_Seek_Result res,P_S_DB_Posiation data);
+void reset_reslut_point(P_S_Seek_Result res);
+unsigned char pop_posiation_result(P_S_Seek_Result res,P_S_DB_Posiation data);
 
+
+void upload_posiation_data(P_S_Seek_Result res,unsigned char num);
 #endif
 

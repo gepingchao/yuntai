@@ -192,12 +192,13 @@ void sys_core_task(void const * argument)
   client_info.target_server.server_ip[0] = 192;
   client_info.target_server.server_ip[1] = 168;
   client_info.target_server.server_ip[2] = 1;
-  client_info.target_server.server_ip[3] = 198;
+  client_info.target_server.server_ip[3] = 205;
   client_info.target_server.server_port = 3333;
   client_info.this_client_socket_num = 2;
   tcp_client(&client_info);
   osDelay(200);
-  db_test();
+  init_db();
+  //db_test();
   //adjust_motor(&motor_1_info);
   //operat_motor(1,200.0,360.0,&motor_1_info);
   //adjust_motor(&motor_2_info);
