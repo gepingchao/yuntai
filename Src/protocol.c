@@ -8,11 +8,11 @@ void motor_goto_angle(P_S_Motor_Info motor_info,float angle)
 	operat_angle = angle - motor_info->current_angle;
 	if(operat_angle > 0)
 		{
-			operat_motor(1, 220.0,operat_angle, motor_info);
+			operat_motor(1, 8000.0,operat_angle, motor_info);
 		}
 	if(operat_angle < 0)
 		{
-			operat_motor(0, 220.0,operat_angle, motor_info);
+			operat_motor(0, 8000.0,operat_angle, motor_info);
 		}
 }
 
@@ -131,7 +131,10 @@ void execute_protocol(P_S_Protocol_Info protocol_info)
 				
 				set_mem((unsigned char * )&db_res, 0,sizeof(S_Seek_Result));
 				seek_posiation_data(&db_res, recv_parameter[0] );
-				upload_posiation_data(&db_res,0);
+				if(db_res.equal_count > 0)
+					{
+						upload_posiation_data(&db_res,0);
+					}
 				break;
 				
 			case commit_to_flash:

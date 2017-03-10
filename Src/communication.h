@@ -2,6 +2,17 @@
 #define __COMMUNICATION_H__
 #include "include.h"
 
+typedef enum
+{
+	msg_ok,
+	msg_error,
+	msg_error_cmd,
+	msg_error_format,
+	msg_cannot_find_posiation,
+}E_Communiction_Msg;
+
+
+
 #define SERIAL_RECV_BUFF_SIZE 256
 #define SERIAL_SEND_BUFF_SIZE 256
 

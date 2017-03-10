@@ -5,6 +5,7 @@
 typedef struct
 {
 	unsigned char this_machime_adress;
+	unsigned char current_ctrl_socket_num;
 	unsigned char this_machine_ip[4];
 	unsigned int this_machine_port[8];
 }S_Current_Machine_Info,*P_S_Current_Machine_Info;

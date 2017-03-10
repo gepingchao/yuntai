@@ -212,7 +212,11 @@ int8_t connect(unsigned char sn, unsigned char * addr, unsigned short port)
    if(sock_io_mode & (1<<sn)) return SOCK_BUSY;
    while(getSn_SR(sn) != SOCK_ESTABLISHED)
    {   
-   	osDelay(20);			
+   	osDelay(20);		
+	if(SOCK_CLOSED == getSn_SR(sn))
+		{
+			return SOCK_CLOSED;
+		}
 		/* close(sn);
 		 osDelay(20);	
 			socket(sn,Sn_MR_TCP,8888+sn,Sn_MR_ND);*/
@@ -220,6 +224,7 @@ int8_t connect(unsigned char sn, unsigned char * addr, unsigned short port)
 		if (getSn_IR(sn) & Sn_IR_TIMEOUT)
 		{
 			setSn_IR(sn, Sn_IR_TIMEOUT);
+			//WIZCHIP_WRITE(Sn_IR(sn), (Sn_IR_TIMEOUT & 0x1F));
          #if _WIZCHIP_ == 5200   // for W5200 ARP errata 
             setSUBR((unsigned char*)"\x00\x00\x00\x00");
          #endif

@@ -237,19 +237,21 @@ void task_motor_server(unsigned char command)
 {
 	switch(command)
 		{
-			case motor1_run_out:
-				motor_1_info.posiation_lock = INVALID;
-				SET_ENABLE_1_0;				
+			case motor1_run_out:			
 				HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);  
 				HAL_TIM_Base_Stop_IT(&htim3);
+				osDelay(1);//保持1ms
+				motor_1_info.posiation_lock = INVALID;
+				SET_ENABLE_1_0;	
 				
 				break;
 
-			case motor2_run_out:
-				motor_2_info.posiation_lock = INVALID;
-				SET_ENABLE_2_0;				
+			case motor2_run_out:				
 				HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);  
 				HAL_TIM_Base_Stop_IT(&htim2);
+				osDelay(1);//保持1ms
+				motor_2_info.posiation_lock = INVALID;
+				SET_ENABLE_2_0;
 
 				break;
 
@@ -261,20 +263,22 @@ void task_motor_server(unsigned char command)
 				motor_run(&motor_2_info);
 				break;
 
-			case motor1_stop:
-				SET_ENABLE_1_0;				
+			case motor1_stop:			
 				HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);  
 				HAL_TIM_Base_Stop_IT(&htim3);
+				osDelay(1);//保持1ms
 				motor_1_info.finish_pulse = motor_1_info.pulse_count;
 				motor_1_info.pulse_count = 0;
+				SET_ENABLE_1_0;	
 				break;
 
 			case motor2_stop:
-				SET_ENABLE_2_0;
 				HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1); 
 				HAL_TIM_Base_Stop_IT(&htim2);
+				osDelay(1);//保持1ms
 				motor_2_info.finish_pulse = motor_2_info.pulse_count;
 				motor_2_info.pulse_count = 0;
+				SET_ENABLE_2_0;
 				break;
 				
 			case motor1_limit_trigger:
@@ -434,7 +438,7 @@ float get_current_angle(P_S_Motor_Info motor_info)
 		}
 	else
 		{
-			completely_pulse = 0X3DF8;
+			completely_pulse = GEAR_REDUCTION_RATIO * IC_REDUCTION_RATIO*PLUSE_PER_CRICLE;
 		}
 	tmp_angle = 360 * ((float)(motor_info->current_position) - (float)(completely_pulse))/(float)(completely_pulse);
 	motor_info->current_angle = tmp_angle;
@@ -447,13 +451,13 @@ void remove_gap(P_S_Motor_Info motor_info,float gap)
 	if(1 == motor_info->direction)
 		{
 			motor_info->posiation_lock = EFFECT;
-			operat_motor(0,220.0,gap,motor_info);
+			operat_motor(0,800.0,gap,motor_info);
 			osDelay(15);
 		}
 	if(0 == motor_info->direction)
 		{
 			motor_info->posiation_lock = EFFECT;
-			operat_motor(1,220.0,gap,motor_info);
+			operat_motor(1,800.0,gap,motor_info);
 			osDelay(15);
 		}
 		

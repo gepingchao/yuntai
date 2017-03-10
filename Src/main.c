@@ -197,6 +197,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			}
 		if(motor_2_info.pulse_count> motor_2_info.distance)
 			{
+				if((1 == motor_2_info.direction)&&(EFFECT != motor_2_info.posiation_lock))//当超过计数个数时,减去多操作的计数值
+					{
+						motor_2_info.current_position --;
+					}
+				if((0 == motor_2_info.direction)&&(EFFECT != motor_2_info.posiation_lock))
+					{
+						motor_2_info.current_position ++;
+					}	
 				motor_2_info.finish_pulse = motor_2_info.pulse_count;
 				motor_2_info.pulse_count = 0;
 				g_motor_2_mesg = motor2_run_out;
@@ -217,6 +225,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			}
 		if(motor_1_info.pulse_count > motor_1_info.distance)
 			{
+				if((1 == motor_1_info.direction)&&(EFFECT!= motor_1_info.posiation_lock))
+					{
+						motor_1_info.current_position --;
+					}
+				if((0 == motor_1_info.direction)&&(EFFECT!= motor_1_info.posiation_lock))
+					{
+						motor_1_info.current_position ++;
+					}	
 				motor_1_info.finish_pulse = motor_1_info.pulse_count;
 				motor_1_info.pulse_count = 0;
 				g_motor_1_mesg = motor1_run_out;
