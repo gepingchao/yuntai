@@ -186,6 +186,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 	if (htim->Instance == TIM2) //motor2
 	{
+		dynamic_timer(&motor_2_info);
 		motor_2_info.pulse_count++;
 		if((1 == motor_2_info.direction)&&(EFFECT != motor_2_info.posiation_lock))
 			{
@@ -214,6 +215,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 	if (htim->Instance == TIM3) //motor1
 	{
+		dynamic_timer(&motor_1_info);
 		motor_1_info.pulse_count ++;
 		if((1 == motor_1_info.direction)&&(EFFECT!= motor_1_info.posiation_lock))
 			{

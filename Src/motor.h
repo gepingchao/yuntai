@@ -11,6 +11,10 @@
 	motor2_start_run,
 	motor1_stop,
 	motor2_stop,
+	motor1_start_up,
+	motor1_halt,
+	motor2_start_up,
+	motor2_halt,
 	motor1_limit_trigger,
 	motor2_limit_trigger
   } E_Motor_Command;
@@ -27,12 +31,14 @@ typedef struct
 	unsigned char is_this_motor_adjusted;
 	unsigned char is_this_motor_operational;//当前电机运行是否正常
 	unsigned char posiation_lock;//位置锁   当转向更改时对位置加锁,消除间隙的脉冲不改变当前位置
-
+	unsigned char start_up_flag;
 	TIM_HandleTypeDef* timer;
 
 	unsigned int timer_value;
 	
 	unsigned int adjust;
+	int inc_pulse;
+	int dynamic_speed;
 	int speed;
 	float current_position;
 	float current_angle;
@@ -55,9 +61,9 @@ extern S_Motor_Info motor_2_info;
 
 
 void user_pwm_setvalue(TIM_HandleTypeDef *htim,uint16_t value);
-void set_timer_2(unsigned short frequency);
-void set_timer_3(unsigned short frequency);
 unsigned int set_timer(TIM_HandleTypeDef* timer,unsigned int frequency);
+void dynamic_timer(P_S_Motor_Info motor);
+
 void task_motor_server(unsigned char command);
 
 /////////////////////////////////////////////////////////////////////////////下面是可以调用的函数

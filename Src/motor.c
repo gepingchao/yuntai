@@ -17,6 +17,16 @@ extern osMessageQId motor_queueHandle;
 
 
 
+#define GEAR_REDUCTION_RATIO 1
+#define IC_REDUCTION_RATIO 16
+#define PLUSE_PER_CRICLE 200
+
+#define START_UP_SPEED (IC_REDUCTION_RATIO*PLUSE_PER_CRICLE*2)//表示开始加速时的初始速度
+#define MAX_SPEED	(IC_REDUCTION_RATIO*1000)//最大速度
+#define START_UP_PULSE_INC_STEP		500//表示相邻两级速度差的频率(hz)
+#define START_UP_PULSE_EACH_COUNT	200 //表示加速阶段每多少个脉冲速度加一级
+
+
 
 void user_pwm_setvalue(TIM_HandleTypeDef *htim,uint16_t value)
 {
@@ -80,80 +90,29 @@ unsigned int set_timer(TIM_HandleTypeDef* timer,unsigned int frequency)
 }	
 
 
-void set_timer_2(unsigned short frequency)
+
+void dynamic_timer(P_S_Motor_Info motor)
 {
-  unsigned int tmp_value;
-  tmp_value = (1000000/frequency) - 1;
-  TIM_MasterConfigTypeDef sMasterConfig;
-  TIM_OC_InitTypeDef sConfigOC;
-  htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 71;
-  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = tmp_value;
-  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-
-  HAL_TIM_MspPostInit(&htim2);
-
+	if((motor->speed > START_UP_SPEED)&&(1 == motor->start_up_flag))
+		{
+			motor->start_up_flag = 0;
+			motor->dynamic_speed = START_UP_SPEED;
+		}
+	if((motor->inc_pulse > START_UP_PULSE_EACH_COUNT)&&(motor->dynamic_speed < motor->speed))//加速阶段
+		{
+			motor->inc_pulse = 0;
+			motor->timer_value = set_timer(motor->timer,(motor->dynamic_speed += START_UP_PULSE_INC_STEP));
+			user_pwm_setvalue(motor->timer,(motor->timer_value)/2);
+		}
+	if(motor->dynamic_speed > motor->speed)//达到最大转速
+		{
+			motor->dynamic_speed = motor->speed;
+			motor->timer_value = set_timer(motor->timer,(motor->dynamic_speed));
+			user_pwm_setvalue(motor->timer,(motor->timer_value)/2);			
+		}
+	motor->inc_pulse ++;
 }
 
-
-void set_timer_3(unsigned short frequency)
-{
-  unsigned int tmp_value;
-  tmp_value = (1000000/frequency) - 1;
-  TIM_MasterConfigTypeDef sMasterConfig;
-  TIM_OC_InitTypeDef sConfigOC;
-
-  
-  htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 71;
-  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = tmp_value;
-  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  HAL_TIM_MspPostInit(&htim3);
-
-}
 
 unsigned int change_speed_2_freq(float speed)
 {
@@ -174,10 +133,6 @@ IC_REDUCTION_RATIO	驱动IC细分
 PLUSE_PER_CRICLE 步进电机转一圈使用的脉冲数 (360/步进角)
 根据使用的电机和减速器设置
 *****************************/
-
-#define GEAR_REDUCTION_RATIO 1
-#define IC_REDUCTION_RATIO 16
-#define PLUSE_PER_CRICLE 200
 
 
 unsigned int change_angle_2_freq_default(float angle)
@@ -200,7 +155,10 @@ unsigned int change_angle_2_freq_user(P_S_Motor_Info motor_info,float angle)
 
 void motor_run(P_S_Motor_Info motor_info)
 {
-	motor_info->timer_value = set_timer(motor_info->timer,motor_info->speed);	
+	//motor_info->timer_value = set_timer(motor_info->timer,motor_info->speed);	
+	motor_info->start_up_flag = 1;//加速启动
+	motor_info->inc_pulse = 0;//
+	dynamic_timer(motor_info);	
 	osDelay(1);
 	if(1 == motor_info->direction)
 		{
@@ -240,7 +198,8 @@ void task_motor_server(unsigned char command)
 			case motor1_run_out:			
 				HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);  
 				HAL_TIM_Base_Stop_IT(&htim3);
-				osDelay(1);//保持1ms
+				//osDelay(3);//保持
+				motor_1_info.start_up_flag = 0;
 				motor_1_info.posiation_lock = INVALID;
 				SET_ENABLE_1_0;	
 				
@@ -249,7 +208,8 @@ void task_motor_server(unsigned char command)
 			case motor2_run_out:				
 				HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);  
 				HAL_TIM_Base_Stop_IT(&htim2);
-				osDelay(1);//保持1ms
+				motor_2_info.start_up_flag = 0;
+				//osDelay(3);//保持
 				motor_2_info.posiation_lock = INVALID;
 				SET_ENABLE_2_0;
 
@@ -266,7 +226,8 @@ void task_motor_server(unsigned char command)
 			case motor1_stop:			
 				HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);  
 				HAL_TIM_Base_Stop_IT(&htim3);
-				osDelay(1);//保持1ms
+				//osDelay(3);//保持
+				motor_1_info.start_up_flag = 0;
 				motor_1_info.finish_pulse = motor_1_info.pulse_count;
 				motor_1_info.pulse_count = 0;
 				SET_ENABLE_1_0;	
@@ -275,10 +236,25 @@ void task_motor_server(unsigned char command)
 			case motor2_stop:
 				HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1); 
 				HAL_TIM_Base_Stop_IT(&htim2);
-				osDelay(1);//保持1ms
+				//osDelay(3);//保持
+				motor_2_info.start_up_flag = 0;
 				motor_2_info.finish_pulse = motor_2_info.pulse_count;
 				motor_2_info.pulse_count = 0;
 				SET_ENABLE_2_0;
+				break;
+
+			case motor1_start_up:
+
+				break;
+			case motor1_halt:
+
+				break;
+
+			case motor2_start_up:
+
+				break;
+			case motor2_halt:
+
 				break;
 				
 			case motor1_limit_trigger:
