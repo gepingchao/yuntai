@@ -16,8 +16,8 @@ typedef struct
 	unsigned char direction;
 	unsigned int h_posiation;
 	unsigned int v_posiation;
-	unsigned int speed;
-	unsigned int time;
+	unsigned int runing_time;
+	unsigned int start_time;
 }S_DB_Posiation,*P_S_DB_Posiation;
 
 void reinit_db(void);

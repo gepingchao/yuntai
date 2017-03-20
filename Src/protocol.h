@@ -22,7 +22,8 @@ typedef enum
 	cancel_operat = 0X27,
 	polling_motor_rs485_info = 0X30,
 
-	test_motor_driver= 0X88
+	test_motor_driver= 0X88,
+	test_motor_driver_time= 0X89
 	
 }E_Motor_Ctrl_Command;
 

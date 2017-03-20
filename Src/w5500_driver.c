@@ -341,7 +341,7 @@ void tcp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(TCP_S_socket_0, start_tcp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_S_socket_0, start_tcp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_0 = osThreadCreate(osThread(TCP_S_socket_0), (void*)thread_parameter);
 		}
 	if(socket_num == 1)
@@ -353,7 +353,7 @@ void tcp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(TCP_S_socket_1, start_tcp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_S_socket_1, start_tcp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_1 = osThreadCreate(osThread(TCP_S_socket_1), (void*)thread_parameter);
 
 		}
@@ -366,7 +366,7 @@ void tcp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(TCP_S_socket_2, start_tcp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_S_socket_2, start_tcp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_2 = osThreadCreate(osThread(TCP_S_socket_2), (void*)thread_parameter);
 		}
 	if(socket_num == 3)
@@ -378,7 +378,7 @@ void tcp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(TCP_S_socket_3, start_tcp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_S_socket_3, start_tcp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_3 = osThreadCreate(osThread(TCP_S_socket_3), (void*)thread_parameter);
 		}
 	if(socket_num == 4)
@@ -390,7 +390,7 @@ void tcp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(TCP_S_socket_4, start_tcp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_S_socket_4, start_tcp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_4 = osThreadCreate(osThread(TCP_S_socket_4), (void*)thread_parameter);
 		}
 	if(socket_num == 5)
@@ -402,7 +402,7 @@ void tcp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(TCP_S_socket_5, start_tcp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_S_socket_5, start_tcp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_5 = osThreadCreate(osThread(TCP_S_socket_5), (void*)thread_parameter);
 		}
 	if(socket_num == 6)
@@ -414,7 +414,7 @@ void tcp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(TCP_S_socket_6, start_tcp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_S_socket_6, start_tcp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_6 = osThreadCreate(osThread(TCP_S_socket_6), (void*)thread_parameter);
 		}
 	if(socket_num == 7)
@@ -426,7 +426,7 @@ void tcp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(TCP_S_socket_7, start_tcp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_S_socket_7, start_tcp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_7 = osThreadCreate(osThread(TCP_S_socket_7), (void*)thread_parameter);
 		}
 }
@@ -562,7 +562,7 @@ void tcp_client(p_S_Client_Info client)//µ÷ÓÃÕâ¸öº¯Êý»á²úÉúÒ»¸öÈÎÎñÎªÏàÓ¦µÄsock×
 							return;
 						}
 				}
-			osThreadDef(TCP_C_socket_0, start_tcp_client_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_C_socket_0, start_tcp_client_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_0 = osThreadCreate(osThread(TCP_C_socket_0), thread_parameter);
 		}
 	if(client->this_client_socket_num == 1)
@@ -574,7 +574,7 @@ void tcp_client(p_S_Client_Info client)//µ÷ÓÃÕâ¸öº¯Êý»á²úÉúÒ»¸öÈÎÎñÎªÏàÓ¦µÄsock×
 							return;
 						}
 				}
-			osThreadDef(TCP_C_socket_1, start_tcp_client_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_C_socket_1, start_tcp_client_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_1 = osThreadCreate(osThread(TCP_C_socket_1), thread_parameter);
 		}
 	if(client->this_client_socket_num == 2)
@@ -586,7 +586,7 @@ void tcp_client(p_S_Client_Info client)//µ÷ÓÃÕâ¸öº¯Êý»á²úÉúÒ»¸öÈÎÎñÎªÏàÓ¦µÄsock×
 							return;
 						}
 				}
-			osThreadDef(TCP_C_socket_2, start_tcp_client_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_C_socket_2, start_tcp_client_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_2 = osThreadCreate(osThread(TCP_C_socket_2), thread_parameter);
 		}
 	if(client->this_client_socket_num == 3)
@@ -598,7 +598,7 @@ void tcp_client(p_S_Client_Info client)//µ÷ÓÃÕâ¸öº¯Êý»á²úÉúÒ»¸öÈÎÎñÎªÏàÓ¦µÄsock×
 							return;
 						}
 				}
-			osThreadDef(TCP_C_socket_3, start_tcp_client_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_C_socket_3, start_tcp_client_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_3 = osThreadCreate(osThread(TCP_C_socket_3), thread_parameter);
 		}
 	if(client->this_client_socket_num == 4)
@@ -610,7 +610,7 @@ void tcp_client(p_S_Client_Info client)//µ÷ÓÃÕâ¸öº¯Êý»á²úÉúÒ»¸öÈÎÎñÎªÏàÓ¦µÄsock×
 							return;
 						}
 				}
-			osThreadDef(TCP_C_socket_4, start_tcp_client_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_C_socket_4, start_tcp_client_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_4 = osThreadCreate(osThread(TCP_C_socket_4), thread_parameter);
 		}
 	if(client->this_client_socket_num == 5)
@@ -622,7 +622,7 @@ void tcp_client(p_S_Client_Info client)//µ÷ÓÃÕâ¸öº¯Êý»á²úÉúÒ»¸öÈÎÎñÎªÏàÓ¦µÄsock×
 							return;
 						}
 				}
-			osThreadDef(TCP_C_socket_5, start_tcp_client_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_C_socket_5, start_tcp_client_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_5 = osThreadCreate(osThread(TCP_C_socket_5), thread_parameter);
 		}
 	if(client->this_client_socket_num == 6)
@@ -634,7 +634,7 @@ void tcp_client(p_S_Client_Info client)//µ÷ÓÃÕâ¸öº¯Êý»á²úÉúÒ»¸öÈÎÎñÎªÏàÓ¦µÄsock×
 							return;
 						}
 				}
-			osThreadDef(TCP_C_socket_6, start_tcp_client_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_C_socket_6, start_tcp_client_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_6 = osThreadCreate(osThread(TCP_C_socket_6), thread_parameter);
 		}
 
@@ -647,7 +647,7 @@ void tcp_client(p_S_Client_Info client)//µ÷ÓÃÕâ¸öº¯Êý»á²úÉúÒ»¸öÈÎÎñÎªÏàÓ¦µÄsock×
 							return;
 						}
 				}
-			osThreadDef(TCP_C_socket_7, start_tcp_client_thread, osPriorityNormal, 0, 128);
+			osThreadDef(TCP_C_socket_7, start_tcp_client_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_7 = osThreadCreate(osThread(TCP_C_socket_7), thread_parameter);
 		}
 
@@ -747,7 +747,7 @@ void udp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(UDP_socket_0, start_udp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(UDP_socket_0, start_udp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_0 = osThreadCreate(osThread(UDP_socket_0), (void*)thread_parameter);
 		}
 
@@ -760,7 +760,7 @@ void udp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(UDP_socket_1, start_udp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(UDP_socket_1, start_udp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_1 = osThreadCreate(osThread(UDP_socket_1), (void*)thread_parameter);
 		}
 
@@ -773,7 +773,7 @@ void udp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(UDP_socket_2, start_udp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(UDP_socket_2, start_udp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_2 = osThreadCreate(osThread(UDP_socket_2), (void*)thread_parameter);
 		}
 
@@ -786,7 +786,7 @@ void udp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(UDP_socket_3, start_udp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(UDP_socket_3, start_udp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_3 = osThreadCreate(osThread(UDP_socket_3), (void*)thread_parameter);
 		}
 
@@ -799,7 +799,7 @@ void udp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(UDP_socket_4, start_udp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(UDP_socket_4, start_udp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_4= osThreadCreate(osThread(UDP_socket_4), (void*)thread_parameter);
 		}
 
@@ -813,7 +813,7 @@ void udp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(UDP_socket_5, start_udp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(UDP_socket_5, start_udp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_5 = osThreadCreate(osThread(UDP_socket_5), (void*)thread_parameter);
 		}
 
@@ -826,7 +826,7 @@ void udp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(UDP_socket_6, start_udp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(UDP_socket_6, start_udp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_6 = osThreadCreate(osThread(UDP_socket_6), (void*)thread_parameter);
 		}
 
@@ -840,7 +840,7 @@ void udp_server(unsigned int socket_num,unsigned int port)
 							return;
 						}
 				}
-			osThreadDef(UDP_socket_7, start_udp_server_thread, osPriorityNormal, 0, 128);
+			osThreadDef(UDP_socket_7, start_udp_server_thread, osPriorityNormal, 0, 300);
 			Socket_Server.server_handle_7 = osThreadCreate(osThread(UDP_socket_7), (void*)thread_parameter);
 		}
 

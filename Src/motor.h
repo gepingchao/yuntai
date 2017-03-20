@@ -42,6 +42,8 @@ typedef struct
 	int speed;
 	float current_position;
 	float current_angle;
+	float unsigned_posiation;//0-360-0
+	float unsigned_current_angle;
 	unsigned int distance;
 	unsigned int pulse_count;
 	unsigned int finish_pulse;

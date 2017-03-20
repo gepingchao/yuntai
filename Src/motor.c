@@ -17,12 +17,14 @@ extern osMessageQId motor_queueHandle;
 
 
 
-#define GEAR_REDUCTION_RATIO 1
+#define GEAR_REDUCTION_RATIO 5
 #define IC_REDUCTION_RATIO 16
 #define PLUSE_PER_CRICLE 200
 
 #define START_UP_SPEED (IC_REDUCTION_RATIO*PLUSE_PER_CRICLE*2)//表示开始加速时的初始速度
 #define MAX_SPEED	(IC_REDUCTION_RATIO*1000)//最大速度
+
+///启动加速宏
 #define START_UP_PULSE_INC_STEP		500//表示相邻两级速度差的频率(hz)
 #define START_UP_PULSE_EACH_COUNT	200 //表示加速阶段每多少个脉冲速度加一级
 
@@ -93,18 +95,28 @@ unsigned int set_timer(TIM_HandleTypeDef* timer,unsigned int frequency)
 
 void dynamic_timer(P_S_Motor_Info motor)
 {
-	if((motor->speed > START_UP_SPEED)&&(1 == motor->start_up_flag))
+	if((motor->speed < START_UP_SPEED)&&(1 == motor->start_up_flag))
+		{
+			motor->start_up_flag = 0;
+			motor->dynamic_speed = motor->speed;
+			motor->timer_value = set_timer(motor->timer,motor->dynamic_speed);
+			user_pwm_setvalue(motor->timer,(motor->timer_value)/2);
+		}
+	if(((motor->speed > START_UP_SPEED)||(motor->speed == START_UP_SPEED))&&(1 == motor->start_up_flag))//转速大于启动转速 加速启动
 		{
 			motor->start_up_flag = 0;
 			motor->dynamic_speed = START_UP_SPEED;
+			motor->timer_value = set_timer(motor->timer,motor->dynamic_speed);
+			user_pwm_setvalue(motor->timer,(motor->timer_value)/2);
 		}
 	if((motor->inc_pulse > START_UP_PULSE_EACH_COUNT)&&(motor->dynamic_speed < motor->speed))//加速阶段
 		{
 			motor->inc_pulse = 0;
-			motor->timer_value = set_timer(motor->timer,(motor->dynamic_speed += START_UP_PULSE_INC_STEP));
+			motor->timer_value = set_timer(motor->timer,motor->dynamic_speed);
 			user_pwm_setvalue(motor->timer,(motor->timer_value)/2);
+			motor->dynamic_speed += START_UP_PULSE_INC_STEP;
 		}
-	if(motor->dynamic_speed > motor->speed)//达到最大转速
+	if(motor->dynamic_speed > motor->speed)//达到最大转速或者转速小于最小启动转速
 		{
 			motor->dynamic_speed = motor->speed;
 			motor->timer_value = set_timer(motor->timer,(motor->dynamic_speed));
@@ -159,7 +171,7 @@ void motor_run(P_S_Motor_Info motor_info)
 	motor_info->start_up_flag = 1;//加速启动
 	motor_info->inc_pulse = 0;//
 	dynamic_timer(motor_info);	
-	osDelay(1);
+	//osDelay(1);
 	if(1 == motor_info->direction)
 		{
 			if(1 == motor_info ->motor_num)
@@ -405,7 +417,7 @@ void adjust_motor(P_S_Motor_Info motor_info)
 
 float get_current_angle(P_S_Motor_Info motor_info)
 {
-	float tmp_angle;
+	float tmp_angle,unsigned_tmp_angle;
 	unsigned int completely_pulse;
 	
 	if(1 == motor_info->is_this_motor_adjusted)
@@ -416,8 +428,15 @@ float get_current_angle(P_S_Motor_Info motor_info)
 		{
 			completely_pulse = GEAR_REDUCTION_RATIO * IC_REDUCTION_RATIO*PLUSE_PER_CRICLE;
 		}
+	motor_info->unsigned_posiation =(float)( ((int)(motor_info->current_position)) % completely_pulse);
+	
 	tmp_angle = 360 * ((float)(motor_info->current_position) - (float)(completely_pulse))/(float)(completely_pulse);
+	
+	unsigned_tmp_angle = 360 * ((float)(motor_info->unsigned_posiation) - (float)(completely_pulse))/(float)(completely_pulse);
+	
 	motor_info->current_angle = tmp_angle;
+	motor_info->unsigned_current_angle= unsigned_tmp_angle;
+	
 	return tmp_angle;
 }
 

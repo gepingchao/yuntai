@@ -12,8 +12,79 @@ void motor_goto_angle(P_S_Motor_Info motor_info,float angle)
 		}
 	if(operat_angle < 0)
 		{
-			operat_motor(0, 8000.0,operat_angle, motor_info);
+			operat_motor(0, 8000.0,-operat_angle, motor_info);
 		}
+}
+
+void motor_goto_angle_inspeed(P_S_Motor_Info motor_info,float angle,unsigned char speed)
+{	
+	float operat_angle,motor_speed;
+	motor_speed = speed*200 + 200;
+	operat_angle = angle - motor_info->current_angle;
+	if(operat_angle > 0)
+		{
+			operat_motor(1, motor_speed,operat_angle, motor_info);
+		}
+	if(operat_angle < 0)
+		{
+			operat_motor(0, motor_speed,-operat_angle, motor_info);
+		}
+}
+
+void motor_goto_angle_intime(P_S_Motor_Info motor_info,float angle,unsigned int time)
+{	
+	float operat_angle,motor_speed,runing_time;
+	runing_time = ((float)time);
+	
+	//motor_speed = speed*200 + 200;
+	operat_angle = angle - motor_info->current_angle;
+	motor_speed = (operat_angle / runing_time)*44444.44;
+	//motor_goto_angle_inspeed(motor_info,angle, motor_speed);
+	if(operat_angle > 0)
+		{
+			operat_motor(1, motor_speed,operat_angle, motor_info);
+		}
+	if(operat_angle < 0)
+		{
+			operat_motor(0, -motor_speed,-operat_angle, motor_info);
+		}
+}
+
+void motor_goto_point(P_S_DB_Posiation posiation_point)
+{
+	unsigned char direction;
+	unsigned int h_posiation;
+	unsigned int v_posiation;
+	unsigned int runing_time;
+	unsigned int time;
+	float f_h_angle,f_v_angle;
+	
+	direction = posiation_point->direction;
+	h_posiation = posiation_point->h_posiation;
+	v_posiation = posiation_point->v_posiation;
+	runing_time= posiation_point->runing_time;
+	time= posiation_point->start_time;
+  
+  
+	f_h_angle = ((float)h_posiation)/10;
+	f_v_angle = ((float)v_posiation)/10;
+	
+	
+	//motor_goto_angle_inspeed(&motor_1_info,f_h_angle,speed);
+	//motor_goto_angle_inspeed(&motor_2_info,f_v_angle,speed);
+	motor_goto_angle_intime(&motor_1_info,f_h_angle,runing_time);
+	motor_goto_angle_intime(&motor_2_info,f_v_angle,runing_time);
+}
+
+void motor_jump_point(unsigned short posiation_point)
+{
+	S_Seek_Result res;
+	set_mem((unsigned char*)&res,0,sizeof(res));
+	if(seek_posiation_data(&res, posiation_point))
+		{
+			motor_goto_point((P_S_DB_Posiation)res.result[0]);
+		}
+	
 }
 
 unsigned char adjust_protocol(unsigned char* protocol)
@@ -42,8 +113,8 @@ void pretreatment_protocol(unsigned char* protocol,P_S_Protocol_Info protocol_in
 void execute_protocol(P_S_Protocol_Info protocol_info)
 {
 	float parameter[5]= {0.0};
-	int int_parameter[5] = {0};
-	unsigned char recv_parameter[20]={0};
+	int int_parameter[10] = {0};
+	unsigned char recv_parameter[40]={0};
 	S_DB_Posiation posiation_data;
 	static S_Seek_Result db_res;
 	if((machine_info.this_machime_adress != protocol_info->address)&&(0XFF != protocol_info->address))
@@ -73,8 +144,7 @@ void execute_protocol(P_S_Protocol_Info protocol_info)
 				break;
 
 			case motor1_goto_angle:
-				recv_parameter[0] = *(protocol_info->parameter);
-				recv_parameter[1] = *(protocol_info->parameter+1);
+				memcopy((char *) (protocol_info->parameter), (char *) recv_parameter, 2);
 				int_parameter[0] = (((int)recv_parameter[0])<<8) + recv_parameter[1];
 				parameter[0] = (float)int_parameter[0];
 				parameter[0] = parameter[0]/10;
@@ -82,8 +152,7 @@ void execute_protocol(P_S_Protocol_Info protocol_info)
 				break;
 
 			case motor2_goto_angle:
-				recv_parameter[0] = *(protocol_info->parameter);
-				recv_parameter[1] = *(protocol_info->parameter+1);
+				memcopy((char *) (protocol_info->parameter), (char *) recv_parameter, 2);
 				int_parameter[0] = (((int)recv_parameter[0])<<8) + recv_parameter[1];
 				parameter[0] = (float)int_parameter[0];
 				parameter[0] = parameter[0]/10;
@@ -91,25 +160,32 @@ void execute_protocol(P_S_Protocol_Info protocol_info)
 				break;
 
 			case motor_goto_posiation:
+				memcopy((char *) (protocol_info->parameter), (char *) recv_parameter, 2);
+				int_parameter[0] = (((int)recv_parameter[0])<<8) + recv_parameter[1];
+				if(0XFF == int_parameter[0])
+					{
+						return;
+					}
+				motor_jump_point(int_parameter[0]);
 				
 				break;
 
 			case save_motor_posiation_info:
 				
-				memcopy((char *) (protocol_info->parameter), (char *) recv_parameter, 17);
+				memcopy((char *) (protocol_info->parameter), (char *) recv_parameter, 21);
 				int_parameter[0] = (((int)recv_parameter[0])<<24) +(((int)recv_parameter[1])<<16) +(((int)recv_parameter[2])<<8) + recv_parameter[3];
 				int_parameter[1] = (((int)recv_parameter[4])<<24) +(((int)recv_parameter[5])<<16) +(((int)recv_parameter[6])<<8) + recv_parameter[7];
 				int_parameter[2] = (((int)recv_parameter[8])<<24) +(((int)recv_parameter[9])<<16) +(((int)recv_parameter[10])<<8) + recv_parameter[11];
 				int_parameter[3] = recv_parameter[12];
-				int_parameter[4] = (((int)recv_parameter[13])<<24) +(((int)recv_parameter[14])<<16) +(((int)recv_parameter[5])<<8) + recv_parameter[16];
-
+				int_parameter[4] = (((int)recv_parameter[13])<<24) +(((int)recv_parameter[14])<<16) +(((int)recv_parameter[15])<<8) + recv_parameter[16];
+				int_parameter[5] = (((int)recv_parameter[17])<<24) +(((int)recv_parameter[18])<<16) +(((int)recv_parameter[19])<<8) + recv_parameter[20];
 				posiation_data.data_type = db_type_posiation;
 				posiation_data.direction = int_parameter[3];
 				posiation_data.h_posiation = int_parameter[0];
 				posiation_data.is_this_data_effect = EFFECT;
-				posiation_data.poiation_number = int_parameter[4];
-				posiation_data.speed = int_parameter[2];
-				posiation_data.time = int_parameter[2];
+				posiation_data.poiation_number = int_parameter[5];
+				posiation_data.runing_time= int_parameter[4];
+				posiation_data.start_time= int_parameter[2];
 				posiation_data.v_posiation = int_parameter[1];
 
 				save_posiation_data(&db_res,&posiation_data);
@@ -160,9 +236,20 @@ void execute_protocol(P_S_Protocol_Info protocol_info)
 				parameter[1] = parameter[1]/10;
 				operat_motor(1,parameter[0],parameter[1],&motor_1_info);
 				operat_motor(1,parameter[0],parameter[1],&motor_2_info);
+
+				//motor_goto_angle_intime(&motor_2_info,parameter[0]/10 ,int_parameter[1] );
 				break;
 				
-
+			case test_motor_driver_time:
+				memcopy((char *) (protocol_info->parameter), (char *) recv_parameter, 6);
+				int_parameter[0] = (((int)recv_parameter[0])<<8) + recv_parameter[1];
+				int_parameter[1] = (((int)recv_parameter[2])<<8) + recv_parameter[3];
+				int_parameter[2] = (((int)recv_parameter[4])<<8) + recv_parameter[5];
+				parameter[1] = ((float)int_parameter[1])/10;
+				parameter[2] = ((float)int_parameter[2])/10;
+				motor_goto_angle_intime(&motor_1_info,parameter[1],int_parameter[0]);
+				motor_goto_angle_intime(&motor_2_info,parameter[2],int_parameter[0]);			
+				
 
 
 			default :

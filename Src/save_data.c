@@ -107,7 +107,7 @@ void upload_posiation_data(P_S_Seek_Result res,unsigned char num)
 	msg[0] = 0XAA;
 	msg[1] = 0X90;
 	msg[2] = 0X00;
-	msg[3] = 22;
+	msg[3] = 27;
 	msg[4] = 0X25;
 	msg[5] = (data.h_posiation >> 24)&0XFF;
 	msg[6] = (data.h_posiation >> 16)&0XFF;
@@ -117,10 +117,10 @@ void upload_posiation_data(P_S_Seek_Result res,unsigned char num)
 	msg[10] = (data.v_posiation >> 16)&0XFF;
 	msg[11] = (data.v_posiation >> 8)&0XFF;
 	msg[12] = (data.h_posiation >> 0)&0XFF;
-	msg[13] = (data.time>> 24)&0XFF;
-	msg[14] = (data.time>> 16)&0XFF;
-	msg[15] = (data.time>> 8)&0XFF;
-	msg[16] = (data.time>> 0)&0XFF;
+	msg[13] = (data.start_time>> 24)&0XFF;
+	msg[14] = (data.start_time>> 16)&0XFF;
+	msg[15] = (data.start_time>> 8)&0XFF;
+	msg[16] = (data.start_time>> 0)&0XFF;
 	if(data.direction == 0XFF)
 		{
 			msg[17] = 0X1;
@@ -129,12 +129,16 @@ void upload_posiation_data(P_S_Seek_Result res,unsigned char num)
 		{
 			msg[17] = 0X00;
 		}
-	msg[18] = (data.poiation_number>> 24)&0XFF;
-	msg[19] = (data.poiation_number>> 16)&0XFF;
-	msg[20] = (data.poiation_number>> 8)&0XFF;
-	msg[21] = (data.poiation_number>> 0)&0XFF;
-	SetCRC8Sub((unsigned char *)msg,22);
-	send(2,msg,23);
+	msg[18] = (data.runing_time>> 24)&0XFF;
+	msg[19] = (data.runing_time>> 16)&0XFF;
+	msg[20] = (data.runing_time>> 8)&0XFF;
+	msg[21] = (data.runing_time>> 0)&0XFF;
+	msg[22] = (data.poiation_number>> 24)&0XFF;
+	msg[23] = (data.poiation_number>> 16)&0XFF;
+	msg[24] = (data.poiation_number>> 8)&0XFF;
+	msg[25] = (data.poiation_number>> 0)&0XFF;
+	SetCRC8Sub((unsigned char *)msg,26);
+	send(2,msg,27);
 }
 
 
