@@ -116,7 +116,7 @@ void upload_posiation_data(P_S_Seek_Result res,unsigned char num)
 	msg[9] = (data.v_posiation >> 24)&0XFF;
 	msg[10] = (data.v_posiation >> 16)&0XFF;
 	msg[11] = (data.v_posiation >> 8)&0XFF;
-	msg[12] = (data.h_posiation >> 0)&0XFF;
+	msg[12] = (data.v_posiation >> 0)&0XFF;
 	msg[13] = (data.start_time>> 24)&0XFF;
 	msg[14] = (data.start_time>> 16)&0XFF;
 	msg[15] = (data.start_time>> 8)&0XFF;
