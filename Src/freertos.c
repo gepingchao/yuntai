@@ -192,7 +192,7 @@ void sys_core_task(void const * argument)
   client_info.target_server.server_ip[0] = 192;
   client_info.target_server.server_ip[1] = 168;
   client_info.target_server.server_ip[2] = 1;
-  client_info.target_server.server_ip[3] = 192;
+  client_info.target_server.server_ip[3] = 211;
   client_info.target_server.server_port = 3333;
   client_info.this_client_socket_num = 2;
   tcp_client(&client_info);
